@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+{% for pipeline in logstash_pipelines %}
+- pipeline.id: {{ pipeline.id }}
+  path.config: "{{ pipeline.path }}"
+{% endfor %}

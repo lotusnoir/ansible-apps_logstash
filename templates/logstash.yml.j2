@@ -1,0 +1,6 @@
+node.name: "{{ ansible_fqdn }}"
+path.logs: {{ logtstash_log_dir }}
+log.level: {{ logtstash_log_level }}
+path.data: {{ logtstash_path_data }}
+pipeline.workers: {{ logtstash_workers }}
+pipeline.batch.size: {{ logtstash_batch_size }}

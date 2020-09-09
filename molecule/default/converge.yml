@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:
+    - name: "Include apps_logstash"
+      include_role:
+        name: "apps_logstash"

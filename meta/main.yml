@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  author: "Philippe leal"
+  description: "Install and configure logstash"
+  role_name: apps_logstash
+  license: "MIT"
+  min_ansible_version: 2.8
+
+  platforms:
+    - name: "Debian"
+      versions:
+        - "buster"
+        - "stretch"
+        - "jessie"
+
+  galaxy_tags:
+    - web
+    - logs
+    - elk
+    - logging
+    - logstash
+    - monitoring
+    - system
+
+dependencies:
+  - { role: geerlingguy.java }

@@ -1,0 +1,92 @@
+---
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
+- when: '"logstash" not in ansible_facts.packages'
+  block:
+    - name: HTTPS APT transport for Elasticsearch repository.
+      apt:
+        name: apt-transport-https
+        state: present
+
+    - name: Add Elasticsearch apt key.
+      apt_key:
+        url: "{{ logstash_apt_key }}"
+        state: present
+
+    - name: Add Logstash repository.
+      apt_repository:
+        repo: "{{ logstash_apt_repo }}"
+        state: present
+
+    - name: Install logstash package
+      apt:
+        name: logstash
+        state: present
+        install_recommends: false
+        update_cache:       true
+        cache_valid_time:   3600
+
+    - name: Add Logstash user to adm group (Debian).
+      user:
+        name: logstash
+        group: logstash
+        groups: adm
+        expires: -1
+
+    - name: Ensure Logstash is started and enabled on boot.
+      service:
+        name: logstash
+        state: started
+        enabled: yes
+
+    - name: Get list of installed plugins.
+      command: >
+        ./bin/logstash-plugin list
+        chdir={{ logstash_dir }}
+      register: logstash_plugins_list
+      changed_when: false
+
+    - name: Install configured plugins.
+      command: >
+        ./bin/logstash-plugin install {{ item }}
+        chdir={{ logstash_dir }}
+      with_items: "{{ logstash_install_plugins }}"
+      when: "item not in logstash_plugins_list.stdout"
+      notify: restart logstash
+
+- name: Copy logstash.yml to /etc/logstash/
+  template:
+    src: logstash.yml.j2
+    dest: /etc/logstash/logstash.yml
+    mode: '0644'
+  notify:
+    - restart logstash
+
+- name: Copy jvm.options.yml to /etc/logstash/
+  template:
+    src: jvm.options.j2
+    dest: /etc/logstash/jvm.options
+    mode: '0644'
+  notify:
+    - restart logstash
+
+- name: Copy pipelines.yml to /etc/logstash/
+  template:
+    src: pipelines.yml.j2
+    dest: /etc/logstash/pipelines.yml
+    mode: '0644'
+  notify:
+    - restart logstash
+  tags: pipe
+
+- name: copy custom rules files
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/logstash/conf.d/"
+    mode: 0644
+#    validate: "/usr/share/logstash/bin/logstash  --config.test_and_exit -f %s"
+  with_fileglob: "{{ logstash_rules_files }}"
+  notify:
+    - restart logstash

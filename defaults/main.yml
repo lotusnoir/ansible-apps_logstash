@@ -1,0 +1,26 @@
+---
+logstash_version: '6.x'
+logstash_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+logstash_apt_repo: "deb https://artifacts.elastic.co/packages/{{ logstash_version }}/apt stable main"
+logstash_dir: /usr/share/logstash
+logstash_install_plugins: []
+#  - logstash-input-snmptrap
+#  - logstash-output-gelf
+#  - logstash-output-kafka
+#  - logstash-output-slack
+#  - logstash-output-email
+#  - logstash-output-tcp
+
+logtstash_log_dir: /var/log/logstash
+logtstash_log_level: info
+logtstash_path_data: /var/lib/logstash
+logtstash_workers: 12
+logtstash_batch_size: 500
+
+logstash_heap_size_initial: 2
+logstash_heap_size_max: 3
+logstash_rules_files: []
+#    - conf.d/*.conf 
+logstash_pipelines: 
+  - id: main
+    path: "/etc/logstash/conf.d/*.conf"
