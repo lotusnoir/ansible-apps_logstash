@@ -5,10 +5,13 @@
 
 - when: '"logstash" not in ansible_facts.packages'
   block:
-    - name: HTTPS APT transport for Elasticsearch repository.
+    - name: "Install requierements"
       apt:
-        name: apt-transport-https
+        name: "{{ item }}"
         state: present
+      with_items:
+        - apt-transport-https
+        - gnupg
 
     - name: import the elasticsearch apt key from the keyserver
       apt_key:
