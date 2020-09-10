@@ -10,9 +10,10 @@
         name: apt-transport-https
         state: present
 
-    - name: Add Elasticsearch apt key.
+    - name: import the elasticsearch apt key from the keyserver
       apt_key:
-        url: "{{ logstash_apt_key }}"
+        id: D88E42B4
+        keyserver: keyserver.ubuntu.com
         state: present
 
     - name: Add Logstash repository.
