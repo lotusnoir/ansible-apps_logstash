@@ -7,9 +7,6 @@ env:
   global:
     - ROLE_NAME: apps_logstash
   matrix:
-#    - MOLECULE_DISTRO: centos8
-#    - MOLECULE_DISTRO: ubuntu2004
-#    - MOLECULE_DISTRO: ubuntu1804
     - MOLECULE_DISTRO: debian10
 
 before_install:
@@ -21,7 +18,10 @@ install:
   - pip install molecule yamllint ansible-lint docker
 
 before_script:
-  - ansible-galaxy install -r requirements.yml
+  # To use the role without the ansible github flag
+  - cd ../
+  - mv ansible-$ROLE_NAME $ROLE_NAME
+  - cd $ROLE_NAME
 
 script:
   # Run tests.

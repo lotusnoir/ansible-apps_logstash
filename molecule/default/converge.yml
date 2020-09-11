@@ -2,7 +2,12 @@
 - name: Converge
   hosts: all
   become: true
-  tasks:
-    - name: "Include apps_logstash"
-      include_role:
-        name: "apps_logstash"
+
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+  roles:
+    - role: apps_logstash

@@ -1,11 +1,11 @@
-# Ansible Role: apps_logstash
+# Ansible Role: ansible-apps_logstash
 
 
 ## Description
 
-[![Build Status](https://travis-ci.com/lotusnoir/apps_logstash.svg?branch=master)](https://travis-ci.com/lotusnoir/apps_logstash)[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)[![Ansible Role](https://img.shields.io/badge/ansible%20role-apps__logstash-blue)](https://galaxy.ansible.com/lotusnoir/apps_logstash/)[![GitHub tag](https://img.shields.io/badge/version-latest-blue)](https://github.com/lotusnoir/apps_logstash/tags)
+[![Build Status](https://travis-ci.com/lotusnoir/ansible-apps_logstash.svg?branch=master)](https://travis-ci.com/lotusnoir/ansible-apps_logstash)[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)[![Ansible Role](https://img.shields.io/badge/ansible%20role-apps__logstash-blue)](https://galaxy.ansible.com/lotusnoir/ansible-apps_logstash/)[![GitHub tag](https://img.shields.io/badge/version-latest-blue)](https://github.com/lotusnoir/ansible-apps_logstash/tags)
 
-Deploy logstash app using ansible.
+Deploy [logstash](https://www.elastic.co/fr/logstash) app using ansible.
 
 
 ## Requirements
@@ -39,7 +39,7 @@ In the meta dependencies we use:
 	  become_method: sudo
 	  gather_facts: yes
 	  roles:
-	    - role: apps_logstash
+	    - role: ansible-apps_logstash
 	  vars:
         logstash_install_plugins: []
           - logstash-input-snmptrap
