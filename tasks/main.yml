@@ -3,20 +3,22 @@
   package_facts:
     manager: auto
 
-- when: '"logstash" not in ansible_facts.packages'
+- name: get version if logstash is installed
+  set_fact:
+    lgst_ver: "{{ ansible_facts.packages['logstash'][0].version }}"
+  when: "'logstash' in ansible_facts.packages"
+
+
+- when: packages['logstash'] is not defined or logstash_installed_version not in lgst_ver
   block:
     - name: "Install requierements"
-      apt:
-        name: "{{ item }}"
+      package:
+        name: ['apt-transport-https', 'gnupg']
         state: present
-      with_items:
-        - apt-transport-https
-        - gnupg
 
     - name: import the elasticsearch apt key from the keyserver
       apt_key:
-        id: D88E42B4
-        keyserver: keyserver.ubuntu.com
+        url: https://keyserver.ubuntu.com/pks/lookup?search=0xD88E42B4&op=get
         state: present
 
     - name: Add Logstash repository.
@@ -25,40 +27,40 @@
         state: present
 
     - name: Install logstash package
-      apt:
+      package:
         name: logstash
-        state: present
+        state: latest
         install_recommends: false
-        update_cache:       true
-        cache_valid_time:   3600
+        update_cache: true
+        cache_valid_time: 3600
 
-    - name: Add Logstash user to adm group (Debian).
+    - name: "Add Logstash user to adm group"
       user:
         name: logstash
         group: logstash
         groups: adm
         expires: -1
 
-    - name: Ensure Logstash is started and enabled on boot.
+    - name: "Ensure Logstash is started and enabled on boot"
       service:
         name: logstash
         state: started
-        enabled: yes
+        enabled: true
 
-    - name: Get list of installed plugins.
-      command: >
-        ./bin/logstash-plugin list
-        chdir={{ logstash_dir }}
-      register: logstash_plugins_list
-      changed_when: false
+- name: "Get list of installed plugins"
+  command: >
+    ./bin/logstash-plugin list
+    chdir={{ logstash_dir }}
+  register: logstash_plugins_list
+  changed_when: false
 
-    - name: Install configured plugins.
-      command: >
-        ./bin/logstash-plugin install {{ item }}
-        chdir={{ logstash_dir }}
-      with_items: "{{ logstash_install_plugins }}"
-      when: "item not in logstash_plugins_list.stdout"
-      notify: restart logstash
+- name: Install configured plugins.
+  command: >
+    ./bin/logstash-plugin install {{ item }}
+    chdir={{ logstash_dir }}
+  with_items: "{{ logstash_install_plugins }}"
+  when: "item not in logstash_plugins_list.stdout"
+  notify: restart logstash
 
 - name: Copy logstash.yml to /etc/logstash/
   template:

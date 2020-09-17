@@ -1,5 +1,6 @@
 ---
-logstash_version: '6.x'
+logstash_version: '7.x'
+logstash_installed_version: 1:7.9.1-1
 logstash_apt_key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
 logstash_apt_repo: "deb https://artifacts.elastic.co/packages/{{ logstash_version }}/apt stable main"
 logstash_dir: /usr/share/logstash
@@ -17,7 +18,7 @@ logtstash_path_data: /var/lib/logstash
 logtstash_workers: 12
 logtstash_batch_size: 500
 
-logstash_heap_size_initial: 2
+logstash_heap_size_initial: 3
 logstash_heap_size_max: 3
 logstash_rules_files: []
 #    - conf.d/*.conf 
