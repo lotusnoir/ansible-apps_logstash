@@ -22,5 +22,5 @@ galaxy_info:
     - monitoring
     - system
 
-dependencies:
-  - { role: geerlingguy.java }
+#dependencies:
+#  - { role: geerlingguy.java }

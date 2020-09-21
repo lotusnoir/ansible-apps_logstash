@@ -10,7 +10,7 @@ Deploy [logstash](https://www.elastic.co/fr/logstash) app using ansible.
 
 ## Requirements
 
-In the meta dependencies we use:
+You nee to install java, we use:
 
  - geerlingguy.java
 

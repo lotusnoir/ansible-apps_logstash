@@ -26,6 +26,12 @@
         repo: "{{ logstash_apt_repo }}"
         state: present
 
+    - name: "Ensure /etc/default/logstash exists"
+      file:
+        path: '/etc/default/logstash'
+        state: directory
+        mode: '0755'
+
     - name: Install logstash package
       package:
         name: logstash
@@ -47,20 +53,20 @@
         state: started
         enabled: true
 
-- name: "Get list of installed plugins"
-  command: >
-    ./bin/logstash-plugin list
-    chdir={{ logstash_dir }}
-  register: logstash_plugins_list
-  changed_when: false
-
-- name: Install configured plugins.
-  command: >
-    ./bin/logstash-plugin install {{ item }}
-    chdir={{ logstash_dir }}
-  with_items: "{{ logstash_install_plugins }}"
-  when: "item not in logstash_plugins_list.stdout"
-  notify: restart logstash
+    - name: "Get list of installed plugins"
+      command: >
+        ./bin/logstash-plugin list
+        chdir={{ logstash_dir }}
+      register: logstash_plugins_list
+      changed_when: false
+    
+    - name: Install configured plugins.
+      command: >
+        ./bin/logstash-plugin install {{ item }}
+        chdir={{ logstash_dir }}
+      with_items: "{{ logstash_install_plugins }}"
+      when: "item not in logstash_plugins_list.stdout"
+      notify: restart logstash
 
 - name: Copy logstash.yml to /etc/logstash/
   template:
