@@ -29,8 +29,7 @@
     - name: "Ensure /etc/default/logstash exists"
       file:
         path: '/etc/default/logstash'
-        state: directory
-        mode: '0755'
+        mode: '0600'
 
     - name: "Install logstash package"
       package:
@@ -57,7 +56,7 @@
         chdir={{ logstash_dir }}
       register: logstash_plugins_list
       changed_when: false
-    
+
     - name: "Install configured plugins"
       command: >
         ./bin/logstash-plugin install {{ item }}
@@ -96,7 +95,7 @@
     src: "{{ item }}"
     dest: "/etc/logstash/conf.d/"
     mode: 0644
-#    validate: "/usr/share/logstash/bin/logstash  --config.test_and_exit -f %s"
+    # validate: "/usr/share/logstash/bin/logstash  --config.test_and_exit -f %s"
   with_fileglob: "{{ logstash_rules_files }}"
   notify:
     - restart logstash
