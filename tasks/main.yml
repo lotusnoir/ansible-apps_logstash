@@ -27,9 +27,15 @@
         state: present
 
     - name: "Ensure /etc/default/logstash exists"
+      stat:
+        path: '/etc/default/logstash'
+      register: def_lgst
+
+    - name: "Create /etc/default/logstash if not exists"
       file:
         path: '/etc/default/logstash'
         mode: '0600'
+        state: '{{ "file" if  def_lgst.stat.exists else "touch" }}'
 
     - name: "Install logstash package"
       package:
