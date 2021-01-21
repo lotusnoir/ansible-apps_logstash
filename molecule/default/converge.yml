@@ -10,4 +10,5 @@
       changed_when: false
 
   roles:
+    - role: geerlingguy.java
     - role: apps_logstash

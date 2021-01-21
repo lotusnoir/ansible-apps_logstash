@@ -3,7 +3,17 @@
 
 ## Description
 
-[![Build Status](https://travis-ci.com/lotusnoir/ansible-apps_logstash.svg?branch=master)](https://travis-ci.com/lotusnoir/ansible-apps_logstash)[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)[![Ansible Role](https://img.shields.io/badge/ansible%20role-apps__logstash-blue)](https://galaxy.ansible.com/lotusnoir/ansible-apps_logstash/)[![GitHub tag](https://img.shields.io/badge/version-latest-blue)](https://github.com/lotusnoir/ansible-apps_logstash/tags)
+[![Build Status](https://travis-ci.com/lotusnoir/ansible-apps_logstash.svg?branch=master?style=flat)](https://travis-ci.com/lotusnoir/ansible-apps_logstash)
+[![License](https://img.shields.io/badge/license-Apache--2.0-brightgreen?style=flat)](https://opensource.org/licenses/Apache-2.0)
+[![Ansible Role](https://img.shields.io/badge/galaxy-apps_logstash-purple?style=flat)](https://galaxy.ansible.com/lotusnoir/apps_logstash)
+![GitHub repo size](https://img.shields.io/github/repo-size/lotusnoir/ansible-apps_logstash?color=orange&style=flat)
+![Ansible Quality Score](https://img.shields.io/ansible/quality/52300)
+[![downloads](https://img.shields.io/ansible/role/d/52300)](https://galaxy.ansible.com/lotusnoir/apps_logstash)
+[![Version](https://img.shields.io/github/release/lotusnoir/ansible-apps_logstash.svg)](https://github.com/lotusnoir/ansible-apps_logstash/releases/)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lotusnoir_ansible-apps_logstash&metric=alert_status)](https://sonarcloud.io/dashboard?id=lotusnoir_ansible-apps_logstash)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=lotusnoir_ansible-apps_logstash&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=lotusnoir_ansible-apps_logstash)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=lotusnoir_ansible-apps_logstash&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=lotusnoir_ansible-apps_logstash)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=lotusnoir_ansible-apps_logstash&metric=security_rating)](https://sonarcloud.io/dashboard?id=lotusnoir_ansible-apps_logstash)
 
 Deploy [logstash](https://www.elastic.co/fr/logstash) app using ansible.
 
