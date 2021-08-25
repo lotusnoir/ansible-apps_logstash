@@ -1,0 +1,107 @@
+---
+- name: "Gather package facts"
+  package_facts:
+    manager: auto
+
+- name: get version if logstash is installed
+  set_fact:
+    lgst_ver: "{{ ansible_facts.packages['logstash'][0].version }}"
+  when: "'logstash' in ansible_facts.packages"
+
+
+- when: packages['logstash'] is not defined or logstash_installed_version not in lgst_ver
+  block:
+    - name: "Install requierements"
+      package:
+        name: ['apt-transport-https', 'gnupg']
+        state: present
+
+    - name: "Import the elasticsearch apt key from the keyserver"
+      apt_key:
+        url: https://keyserver.ubuntu.com/pks/lookup?search=0xD88E42B4&op=get
+        state: present
+
+    - name: "Add Logstash repository"
+      apt_repository:
+        repo: "{{ logstash_apt_repo }}"
+        state: present
+
+    - name: "Ensure /etc/default/logstash exists"
+      stat:
+        path: '/etc/default/logstash'
+      register: def_lgst
+
+    - name: "Create /etc/default/logstash if not exists"
+      file:
+        path: '/etc/default/logstash'
+        mode: '0600'
+        state: '{{ "file" if  def_lgst.stat.exists else "touch" }}'
+
+    - name: "Install logstash package"
+      package:
+        name: logstash
+        state: present
+
+    - name: "Add Logstash user to adm group"
+      user:
+        name: logstash
+        group: logstash
+        groups: adm
+        expires: -1
+
+    - name: "Ensure Logstash is started and enabled on boot"
+      service:
+        name: logstash
+        state: started
+        enabled: true
+        daemon_reload: true
+
+        #    - name: "Get list of installed plugins"
+        #      command: >
+        #        ./bin/logstash-plugin list
+        #        chdir={{ logstash_dir }}
+        #      register: logstash_plugins_list
+        #      changed_when: false
+        #
+        #    - name: "Install configured plugins"
+        #      command: >
+        #        ./bin/logstash-plugin install {{ item }}
+        #        chdir={{ logstash_dir }}
+        #      with_items: "{{ logstash_install_plugins }}"
+        #      when: "item not in logstash_plugins_list.stdout"
+        #      notify: restart logstash
+
+- name: "Copy logstash.yml to /etc/logstash/"
+  template:
+    src: logstash.yml.j2
+    dest: /etc/logstash/logstash.yml
+    mode: '0644'
+  notify:
+    - restart logstash
+
+- name: "Copy jvm.options.yml to /etc/logstash/"
+  template:
+    src: jvm.options.j2
+    dest: /etc/logstash/jvm.options
+    mode: '0644'
+  notify:
+    - restart logstash
+
+- name: "Copy pipelines.yml to /etc/logstash/"
+  template:
+    src: pipelines.yml.j2
+    dest: /etc/logstash/pipelines.yml
+    mode: '0644'
+  notify:
+    - restart logstash
+  tags: pipe
+
+- name: "Copy custom rules files"
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/logstash/conf.d/"
+    mode: 0644
+    # validate: "/usr/share/logstash/bin/logstash  --config.test_and_exit -f %s"
+  with_fileglob: "{{ logstash_rules_files }}"
+  notify:
+    - restart logstash
