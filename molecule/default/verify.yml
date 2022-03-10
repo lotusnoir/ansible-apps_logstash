@@ -28,7 +28,7 @@
     - block:
         - name: Ending play...
           meta: end_host
-      when: ansible_distribution_release not in supported_releases
+      when: ansible_distribution_release not in supported_releases and ansible_distribution_major_version not in supported_releases
 
     ### Install
     - name: Install ca-certificates

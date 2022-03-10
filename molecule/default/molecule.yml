@@ -4,73 +4,52 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: bionic
+  - name: ubuntu18-apps-logstash
     pre_build_image: true
-    image: quay.io/paulfantom/molecule-systemd:ubuntu-18.04
+    image: lotusnoir/ansible_molecule_test_images:ubuntu18
     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: xenial
+  - name: ubuntu20-apps-logstash
     pre_build_image: true
-    image: quay.io/paulfantom/molecule-systemd:ubuntu-16.04
+    image: lotusnoir/ansible_molecule_test_images:ubuntu20
     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: stretch
+    groups:
+      - python3
+  - name: debian10-apps-logstash
     pre_build_image: true
-    image: quay.io/paulfantom/molecule-systemd:debian-9
+    image: lotusnoir/ansible_molecule_test_images:debian10
     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: buster
+  - name: debian11-apps-logstash
     pre_build_image: true
-    image: quay.io/paulfantom/molecule-systemd:debian-10
+    image: lotusnoir/ansible_molecule_test_images:debian11
     docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
     privileged: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#- name: bullseye
-#  pre_build_image: true
-#  image: geerlingguy/docker-debian11-ansible #cant start service
-#  docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#  privileged: true
-#  volumes:
-#    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#- name: centos7
-#  pre_build_image: true
-#  image: quay.io/paulfantom/molecule-systemd:centos-7
-#  docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#  privileged: true
-#  volumes:
-#    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#- name: centos8
-#  pre_build_image: true
-#  image: quay.io/paulfantom/molecule-systemd:centos-8
-#  docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#  privileged: true
-#  volumes:
-#    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#  groups:
-#    - python3
-#- name: rocky8
-#  pre_build_image: true
-#  image: geerlingguy/docker-rockylinux8-ansible:latest
-#  docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#  privileged: true
-#  volumes:
-#    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#- name: fedora
-#  pre_build_image: true
-#  image: quay.io/paulfantom/molecule-systemd:fedora-30
-#  docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
-#  privileged: true
-#  volumes:
-#    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#  groups:
-#    - python3
+  - name: centos7-apps-logstash
+    pre_build_image: true
+    image: lotusnoir/ansible_molecule_test_images:centos7
+    docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: rocky8-apps-logstash
+    pre_build_image: true
+    image: lotusnoir/ansible_molecule_test_images:rocky8
+    docker_host: "${DOCKER_HOST:-unix://var/run/docker.sock}"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - python3
 provisioner:
   name: ansible
   playbooks:
