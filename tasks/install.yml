@@ -1,56 +1,85 @@
 ---
 - name: "Gather package facts"
-  package_facts:
+  ansible.builtin.package_facts:
     manager: auto
 
-- name: get version if logstash is installed
-  set_fact:
+- name: "Get version if logstash is installed"
+  ansible.builtin.set_fact:
     lgst_ver: "{{ ansible_facts.packages['logstash'][0].version }}"
   when: "'logstash' in ansible_facts.packages"
 
-
-- when: packages['logstash'] is not defined or logstash_installed_version not in lgst_ver
+- name: "Install tasks"
+  when: packages['logstash'] is not defined or logstash_installed_version not in lgst_ver
   block:
     - name: "Install requierements"
-      package:
-        name: ['apt-transport-https', 'gnupg']
+      ansible.builtin.package:
+        name: gnupg
         state: present
 
-    - name: "Import the elasticsearch apt key from the keyserver"
-      apt_key:
+    - name: "DEBIAN | Install requierements"
+      ansible.builtin.package:
+        name: apt-transport-https
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: "DEBIAN | Import Elasticsearch GPG key"
+      ansible.builtin.apt_key:
         url: https://keyserver.ubuntu.com/pks/lookup?search=0xD88E42B4&op=get
         state: present
+      when: ansible_os_family == 'Debian'
 
-    - name: "Add Logstash repository"
-      apt_repository:
+    - name: "DEBIAN | Add Logstash repository"
+      ansible.builtin.apt_repository:
         repo: "{{ logstash_apt_repo }}"
         state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: "REDHAT | Import Elasticsearch GPG key"
+      ansible.builtin.rpm_key:
+        key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: "REDHAT | Add Logstash repository."
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/logstash.repo
+        mode: 0644
+        content: |
+          [logstash-{{ logstash_version }}]
+          name=Elastic repository for {{ logstash_version }} packages
+          baseurl=https://artifacts.elastic.co/packages/{{ logstash_version }}/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+      when: ansible_os_family == 'RedHat'
 
     - name: "Ensure /etc/default/logstash exists"
-      stat:
+      ansible.builtin.stat:
         path: '/etc/default/logstash'
       register: def_lgst
 
     - name: "Create /etc/default/logstash if not exists"
-      file:
+      ansible.builtin.file:
         path: '/etc/default/logstash'
         mode: '0600'
         state: '{{ "file" if  def_lgst.stat.exists else "touch" }}'
 
     - name: "Install logstash package"
-      package:
+      ansible.builtin.package:
         name: logstash
         state: present
 
     - name: "Add Logstash user to adm group"
-      user:
+      ansible.builtin.user:
         name: logstash
         group: logstash
         groups: adm
         expires: -1
 
     - name: "Ensure Logstash is started and enabled on boot"
-      service:
+      ansible.builtin.service:
         name: logstash
         state: started
         enabled: true
@@ -72,7 +101,7 @@
         #      notify: restart logstash
 
 - name: "Copy logstash.yml to /etc/logstash/"
-  template:
+  ansible.builtin.template:
     src: logstash.yml.j2
     dest: /etc/logstash/logstash.yml
     mode: '0644'
@@ -80,7 +109,7 @@
     - restart logstash
 
 - name: "Copy jvm.options.yml to /etc/logstash/"
-  template:
+  ansible.builtin.template:
     src: jvm.options.j2
     dest: /etc/logstash/jvm.options
     mode: '0644'
@@ -88,7 +117,7 @@
     - restart logstash
 
 - name: "Copy pipelines.yml to /etc/logstash/"
-  template:
+  ansible.builtin.template:
     src: pipelines.yml.j2
     dest: /etc/logstash/pipelines.yml
     mode: '0644'
@@ -97,7 +126,7 @@
   tags: pipe
 
 - name: "Copy custom rules files"
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/etc/logstash/conf.d/"
     mode: 0644

@@ -1,33 +1,19 @@
 ---
 ### INCLUDE META
-- name: Include roles' meta data
-  include_vars:
+- name: Include role meta file
+  ansible.builtin.include_vars:
     file: "{{ role_path }}/meta/main.yml"
 
-### TEST DISTRIB
-- name: Test the distribution is supported. End the host if not.
-  set_fact:
-    supported_distributions: "{{ galaxy_info.platforms|json_query('[].name') }}"
-- block:
-    - name: Ending play...
-      debug:
-        msg: "{{ ansible_distribution }} not supported. End of host."
-    - name: Ending play...
-      meta: end_host
-  when: ansible_distribution not in supported_distributions
-
-### TEST RELEASE
-- name: Test the release is supported. End the host if not.
-  set_fact:
-    supported_releases: "{{ (galaxy_info.platforms| selectattr('name', 'match', ansible_distribution)| list|first).versions }}"
-- block:
-    - name: Ending play...
-      debug:
-        msg: "{{ ansible_distribution_release }} not supported. End of host."
-    - name: Ending play...
-      meta: end_host
-  when: ansible_distribution_release not in supported_releases and ansible_distribution_major_version not in supported_releases
-
-- name: The distribution and release is supported. Continue play.
-  debug:
-    msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is supported. Continue play."
+### Check supported distribution
+- name: Test if distrib is supported by role
+  block:
+    - name: Test if distrib is supported by role
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution in galaxy_info.platforms|json_query('[].name')
+          - (ansible_distribution_release in (galaxy_info.platforms| selectattr('name', 'match', ansible_distribution)| list|first).versions) or (ansible_distribution_major_version in (galaxy_info.platforms| selectattr('name', 'match', ansible_distribution)| list|first).versions)
+        fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} not supported."
+        success_msg: "{{ ansible_distribution }} {{ ansible_distribution_major_version }} is supported. Continue play."
+  rescue:
+    - name: Distribution not supported
+      ansible.builtin.meta: end_host
