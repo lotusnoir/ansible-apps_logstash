@@ -7,12 +7,24 @@
 [![Ansible Quality Score](https://img.shields.io/ansible/quality/56094)](https://galaxy.ansible.com/lotusnoir/apps_logstash)
 [![License](https://img.shields.io/badge/license-Apache--2.0-brightgreen?style=flat)](https://opensource.org/licenses/Apache-2.0)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Description](#description)
+- [Requirements](#requirements)
+- [Role variables](#role-variables)
+- [Examples](#examples)
+- [License](#license)
+- [Author Information](#author-information)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Description
 
 Deploy [logstash](https://www.elastic.co/fr/logstash) app using ansible.
 ## Requirements
 
-You need to install java - lotusnoir.apps_java
+none
 
 ## Role variables
 
@@ -27,17 +39,6 @@ See [variables](/defaults/main.yml) for more details.
           gather_facts: true
           roles:
             - role: ansible-apps_logstash
-          vars:
-            logstash_install_plugins: []
-              - logstash-input-snmptrap
-              - logstash-output-gelf
-              - logstash-output-kafka
-              - logstash-output-slack
-              - logstash-output-email
-              - logstash-output-tcp
-            logstash_rules_files: []
-              - conf.d/*.conf
-
 
 
 ## License
