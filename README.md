@@ -24,11 +24,22 @@
 Deploy [logstash](https://www.elastic.co/fr/logstash) app using ansible.
 ## Requirements
 
-none
+You need to install java - lotusnoir.apps_java
 
 ## Role variables
 
 See [variables](/defaults/main.yml) for more details.
+
+vars:
+  logstash_install_plugins: []
+    - logstash-input-snmptrap
+    - logstash-output-gelf
+    - logstash-output-kafka
+    - logstash-output-slack
+    - logstash-output-email
+    - logstash-output-tcp
+  logstash_rules_files: []
+    - conf.d/*.conf
 
 ## Examples
 
