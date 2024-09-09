@@ -43,7 +43,7 @@
     - name: "REDHAT | Add Logstash repository."
       ansible.builtin.copy:
         dest: /etc/yum.repos.d/logstash.repo
-        mode: 0644
+        mode: '0644'
         content: |
           [logstash-{{ logstash_version }}]
           name=Elastic repository for {{ logstash_version }} packages
@@ -64,7 +64,7 @@
       ansible.builtin.file:
         path: '/etc/default/logstash'
         mode: '0600'
-        state: '{{ "file" if  def_lgst.stat.exists else "touch" }}'
+        state: '{{ "file" if def_lgst.stat.exists else "touch" }}'
 
     - name: "Install logstash package"
       ansible.builtin.package:
@@ -129,7 +129,7 @@
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/etc/logstash/conf.d/"
-    mode: 0644
+    mode: '0644'
     # validate: "/usr/share/logstash/bin/logstash  --config.test_and_exit -f %s"
   with_fileglob: "{{ logstash_rules_files }}"
   notify:
